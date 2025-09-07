@@ -2,19 +2,20 @@
 
 namespace Database\Seeders;
 
-use App\Models\Voucher;
+use App\Models\Wallet;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class VoucherSeeder extends Seeder
+class WalletSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Voucher::query()->create([
-            'name' => 'Sample Voucher'
-        ]);
+        $wallet = new Wallet();
+        $wallet->customer_id = 'DONY';
+        $wallet->amount = 1_000_000;
+        $wallet->save();
     }
 }

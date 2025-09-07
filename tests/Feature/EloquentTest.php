@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Scopes\IsActiveScope;
+use App\Models\Voucher;
 use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -130,5 +132,80 @@ class EloquentTest extends TestCase
         Category::whereNull('description')->delete();
 
         self::assertEquals(0, Category::count());
+    }
+
+    public function testCreate()
+    {
+        $request = [
+            'id' => 'category1',
+            'name' => 'Category1',
+            'description' => 'category description'
+        ];
+
+        $category = new Category($request);
+        $category->save();
+
+        self::assertNotNull($category->id);
+    }
+
+    public function testCreateMethod()
+    {
+        $request = [
+            'id' => 'ID 10',
+            'name' => 'Category 10',
+            'description' => 'Category Description'
+        ];
+
+        $category = Category::query()->create($request);
+        self::assertNotNull($category->id);
+        self::assertNotNull($category->name);
+        self::assertNotNull($category->description);
+    }
+
+    public function testUpdateMass()
+    {
+        $this->seed(CategorySeeder::class);
+
+        $request = [
+            'id' => 'id updated',
+            'name' => 'name updated',
+            'description' => 'description update'
+        ];
+
+        $category = Category::query()->find('FOOD');
+        $category->fill($request);
+        $category->save();
+
+        self::assertNotNull($category->id);
+    }
+
+    public function testGlobalScopeNotFound()
+    {
+        Category::query()->create([
+            'id' => 'sample',
+            'name' => 'sample global scope'
+        ]);
+
+        $result = Category::query()->find('sample');
+        self::assertNull($result);
+
+        $result = Category::query()->withoutGlobalScopes([IsActiveScope::class])->find('sample');
+        self::assertNotNull($result);
+    }
+
+    public function testGlobalScope()
+    {
+        Category::query()->create([
+            'id' => 'sample2',
+            'name' => 'sample global scope',
+            'is_active' => true
+        ]);
+
+
+        $result = Category::query()->find('sample2');
+        self::assertNotNull($result);
+
+        // $result = Category::query()->withoutGlobalScopes([IsActiveScope::class])->find('sample');
+        // self::assertNotNull($result);
     }
 }

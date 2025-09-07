@@ -13,4 +13,9 @@ class Comment extends Model
     protected $keyType = 'string';
     public $incrementing = true;
     public $timestamps = true;
+    // untuk menambahkan nilai default untuk column
+    protected $attributes = [
+        'title' => 'Default Title',
+        'comment' => 'Default Comment'
+    ];
 }
