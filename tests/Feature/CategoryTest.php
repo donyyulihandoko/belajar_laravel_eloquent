@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Product;
+
 use App\Models\Scopes\IsActiveScope;
 use App\Models\Voucher;
 use Database\Seeders\CategorySeeder;
@@ -13,10 +15,8 @@ use Tests\TestCase;
 use PhpParser\Node\Stmt\Catch_;
 use Illuminate\Support\Facades\Log;
 
-
-class EloquentTest extends TestCase
+class CategoryTest extends TestCase
 {
-
     public function testInsert()
     {
         $category = new Category();
@@ -225,5 +225,26 @@ class EloquentTest extends TestCase
         $products->each(function ($item) {
             Log::info(json_encode($item->id));
         });
+    }
+
+    public function testOneToManyQuery()
+    {
+        $category = new Category();
+        $category->id = 'FOOD';
+        $category->name = 'food';
+        $category->description = 'Food Description';
+        $category->is_active = true;
+        $category->save();
+
+        $product = new Product();
+        $product->id = '1';
+        $product->name = 'product1';
+        $product->description = 'description product1';
+        $product->price = 1_000_000;
+        $product->stok = 100;
+
+        $category->products()->save($product);
+
+        self::assertNotNull($product->category_id);
     }
 }
