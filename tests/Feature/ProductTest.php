@@ -39,4 +39,19 @@ class ProductTest extends TestCase
         $outOfStockProduct = $category->products()->where('stok', '<=', 0)->get();
         self::assertCount(1, $outOfStockProduct);
     }
+
+    public function testHasOfMany()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class]);
+        $category = Category::query()->find('FOOD');
+        self::assertNotNull($category);
+
+        $cheapestProduct = $category->cheapestProduct;
+        self::assertNotNull($cheapestProduct);
+        self::assertEquals(1, $cheapestProduct->id);
+
+        $mostExpensiveProduct = $category->mostExpensiveProduct;
+        self::assertNotNull($mostExpensiveProduct);
+        self::assertEquals(4, $mostExpensiveProduct->id);
+    }
 }
