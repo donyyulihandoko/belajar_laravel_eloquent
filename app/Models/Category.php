@@ -6,6 +6,7 @@ use App\Models\Scopes\IsActiveScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Category extends Model
@@ -49,5 +50,18 @@ class Category extends Model
     public function mostExpensiveProduct(): HasOne
     {
         return $this->hasOne(Product::class, 'category_id', 'id')->latestOfMany('price');
+    }
+
+    // function relationship hasmanytrough to review model
+    public function reviews(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Review::class, //related virtualaccount model
+            Product::class,  //trough wallet model
+            'category_id', //fk on products table
+            'product_id', //fk on reviews table
+            'id', //pk on customers table
+            'id' //pk on wallets table
+        );
     }
 }
