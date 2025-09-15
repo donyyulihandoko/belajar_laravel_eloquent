@@ -40,7 +40,7 @@ class ProductTest extends TestCase
         $products = $category->products;
         self::assertCount(4, $products);
 
-        $outOfStockProduct = $category->products()->where('stok', '<=', 0)->get();
+        $outOfStockProduct = $category->products()->where('stock', '<=', 0)->get();
         self::assertCount(1, $outOfStockProduct);
     }
 
@@ -82,7 +82,7 @@ class ProductTest extends TestCase
 
         $comments->each(function ($item) {
             self::assertEquals('1', $item->commentable_id);
-            self::assertEquals(Product::class, $item->commentable_type);
+            self::assertEquals('product', $item->commentable_type);
             Log::info(json_encode($item));
         });
     }
@@ -118,5 +118,42 @@ class ProductTest extends TestCase
 
             Log::info(json_encode($item));
         });
+    }
+
+    public function testEloquentCollection()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+        // 2 products, 1, 2
+        $products = Product::query()->get();
+
+        // WHERE id IN (1, 2)
+        $products = $products->toQuery()->where('price', 2000_000)->get();
+
+        self::assertNotNull($products);
+        self::assertEquals("1", $products[0]->id);
+    }
+
+    public function testSerialization()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+        $products = Product::query()->get();
+        self::assertCount(4, $products);
+
+        $json = $products->toJson(JSON_PRETTY_PRINT);
+        Log::info($json);
+    }
+
+    public function testSerializationRelation()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class, ImageSeeder::class]);
+
+        $products = Product::query()->get();
+        $products->load(["category", "image"]);
+        self::assertCount(4, $products);
+
+        $json = $products->toJson(JSON_PRETTY_PRINT);
+        Log::info($json);
     }
 }

@@ -26,6 +26,9 @@ class Category extends Model
     protected $attributes = [
         'is_active' => false
     ];
+    protected $casts = [
+        "created_at" => 'datetime:U'
+    ];
 
     // function relationship ke product model
     public function products(): HasMany

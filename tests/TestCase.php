@@ -11,6 +11,8 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        DB::delete("delete from taggables");
+        DB::delete('DELETE FROM tags');
         DB::delete('DELETE FROM customers_likes_products');
         DB::delete('DELETE FROM images');
         DB::delete('DELETE FROM reviews');
@@ -21,5 +23,7 @@ abstract class TestCase extends BaseTestCase
         DB::delete('DELETE FROM virtual_accounts');
         DB::delete('DELETE FROM wallets');
         DB::delete('DELETE FROM customers');
+        DB::delete('DELETE FROM persons');
+        DB::delete('DELETE FROM employees');
     }
 }

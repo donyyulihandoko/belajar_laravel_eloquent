@@ -20,6 +20,7 @@ class Product extends Model
     protected $keyType = 'string';
     public $incrementing = false;
     public $timestamps = false;
+    protected $hidden = ['category_id'];
 
     // function relationship to category model
     public function category(): BelongsTo
